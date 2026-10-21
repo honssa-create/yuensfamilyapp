@@ -23,6 +23,11 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Icon sf="flame.fill" md="local_fire_department" />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="places">
+        <NativeTabs.Trigger.Label>地點</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="mappin.and.ellipse" md="place" />
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="dishes">
         <NativeTabs.Trigger.Label>Dishes</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="book.fill" md="menu_book" />

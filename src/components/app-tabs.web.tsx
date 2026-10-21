@@ -33,6 +33,9 @@ export default function AppTabs() {
           <TabTrigger name="worship" href="/worship" asChild>
             <TabButton>祭祀</TabButton>
           </TabTrigger>
+          <TabTrigger name="places" href="/places" asChild>
+            <TabButton>地點</TabButton>
+          </TabTrigger>
           <TabTrigger name="dishes" href="/dishes" asChild>
             <TabButton>Dishes</TabButton>
           </TabTrigger>

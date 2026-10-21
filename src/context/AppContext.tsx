@@ -19,6 +19,7 @@ import {
   MOCK_MEMBERS,
   MOCK_PUBLIC_DISHES,
 } from '@/constants/mockData';
+import { MOCK_PLACES } from '@/constants/places';
 import {
   MOCK_WORSHIP_ADDRESSES,
   MOCK_WORSHIP_GUIDES,
@@ -42,6 +43,10 @@ import type {
   HotpotSet,
   MealPlan,
   MealPlansByFlat,
+  Place,
+  PlaceInput,
+  PlacePhoto,
+  PlacePhotoInput,
   PublicDish,
   RecipeComment,
   WorshipAddress,
@@ -85,6 +90,10 @@ interface AppContextValue {
   addWorshipRecord: (input: WorshipRecordInput) => string;
   updateWorshipRecord: (id: string, input: WorshipRecordInput) => void;
   deleteWorshipRecord: (id: string) => void;
+  places: Place[];
+  addPlace: (input: PlaceInput) => string;
+  updatePlace: (id: string, input: PlaceInput) => void;
+  deletePlace: (id: string) => void;
   dishes: Dish[];
   hotpotIngredients: HotpotIngredient[];
   hotpotSets: HotpotSet[];
@@ -150,6 +159,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [worshipGuides, setWorshipGuides] = useState<WorshipGuide[]>(MOCK_WORSHIP_GUIDES);
   const [worshipOccasions, setWorshipOccasions] = useState<WorshipOccasion[]>(MOCK_WORSHIP_OCCASIONS);
   const [worshipRecords, setWorshipRecords] = useState<WorshipRecord[]>(MOCK_WORSHIP_RECORDS);
+  const [places, setPlaces] = useState<Place[]>(MOCK_PLACES);
 
   const getFlatName = useCallback(
     (flatId: FlatId) => flats.find((flat) => flat.id === flatId)?.name ?? flatId,
@@ -377,6 +387,50 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteWorshipRecord = useCallback((id: string) => {
     setWorshipRecords((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
+  const toPlacePhotos = (photos: PlacePhotoInput[]): PlacePhoto[] =>
+    photos
+      .map((photo) => ({
+        id: photo.id ?? createId('ph'),
+        uri: photo.uri.trim(),
+        caption: (photo.caption ?? '').trim(),
+      }))
+      .filter((photo) => photo.uri.length > 0);
+
+  const addPlace = useCallback((input: PlaceInput) => {
+    const id = createId('pl');
+    setPlaces((prev) => [
+      ...prev,
+      {
+        id,
+        name: input.name.trim(),
+        address: input.address.trim(),
+        notes: input.notes.trim(),
+        photos: toPlacePhotos(input.photos),
+      },
+    ]);
+    return id;
+  }, []);
+
+  const updatePlace = useCallback((id: string, input: PlaceInput) => {
+    setPlaces((prev) =>
+      prev.map((place) =>
+        place.id === id
+          ? {
+              ...place,
+              name: input.name.trim(),
+              address: input.address.trim(),
+              notes: input.notes.trim(),
+              photos: toPlacePhotos(input.photos),
+            }
+          : place,
+      ),
+    );
+  }, []);
+
+  const deletePlace = useCallback((id: string) => {
+    setPlaces((prev) => prev.filter((place) => place.id !== id));
   }, []);
 
   const addDish = useCallback(
@@ -689,6 +743,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addWorshipRecord,
       updateWorshipRecord,
       deleteWorshipRecord,
+      places,
+      addPlace,
+      updatePlace,
+      deletePlace,
       dishes: allDishes,
       hotpotIngredients,
       hotpotSets,
@@ -752,6 +810,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addWorshipRecord,
       updateWorshipRecord,
       deleteWorshipRecord,
+      places,
+      addPlace,
+      updatePlace,
+      deletePlace,
       allDishes,
       hotpotIngredients,
       hotpotSets,

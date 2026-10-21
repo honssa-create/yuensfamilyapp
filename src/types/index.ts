@@ -124,6 +124,35 @@ export interface WorshipRecordInput {
   occasionId?: string | null;
 }
 
+/** A photo on a family place. `uri` may be a library pick or an https link. */
+export interface PlacePhoto {
+  id: string;
+  uri: string;
+  caption: string;
+}
+
+export interface PlacePhotoInput {
+  id?: string;
+  uri: string;
+  caption?: string;
+}
+
+/** A place the household keeps, separate from 祭祀 addresses. */
+export interface Place {
+  id: string;
+  name: string;
+  address: string;
+  notes: string;
+  photos: PlacePhoto[];
+}
+
+export interface PlaceInput {
+  name: string;
+  address: string;
+  notes: string;
+  photos: PlacePhotoInput[];
+}
+
 /** @deprecated Use FamilyMember */
 export type FamilyProfile = FamilyMember;
 
