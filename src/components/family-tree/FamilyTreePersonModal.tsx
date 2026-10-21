@@ -18,9 +18,16 @@ interface FamilyTreePersonModalProps {
   visible: boolean;
   onClose: () => void;
   person?: FamilyTreePerson | null;
+  /** When adding someone, start with this person already chosen as a parent. */
+  presetParentId?: string;
 }
 
-export function FamilyTreePersonModal({ visible, onClose, person }: FamilyTreePersonModalProps) {
+export function FamilyTreePersonModal({
+  visible,
+  onClose,
+  person,
+  presetParentId,
+}: FamilyTreePersonModalProps) {
   const { familyTree, addFamilyTreePerson, updateFamilyTreePerson } = useAppContext();
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -33,11 +40,11 @@ export function FamilyTreePersonModal({ visible, onClose, person }: FamilyTreePe
     setName(person?.name ?? '');
     setAge(person ? String(person.age) : '');
     setBio(person?.bio ?? '');
-    setParentIds(person ? parentIdsOf(person) : []);
+    setParentIds(person ? parentIdsOf(person) : presetParentId ? [presetParentId] : []);
     setSpouseId(person ? spouseIdOf(person, familyTree) : undefined);
     // Reset only when the dialog opens or the edited person changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible, person?.id]);
+  }, [visible, person?.id, presetParentId]);
 
   const others = familyTree.filter((item) => item.id !== person?.id);
 
@@ -86,7 +93,7 @@ export function FamilyTreePersonModal({ visible, onClose, person }: FamilyTreePe
   return (
     <AppModal
       visible={visible}
-      title={person ? 'Edit Person' : 'Add to Family Tree'}
+      title={person ? 'Edit info · 修改' : 'Add person · 加入'}
       onClose={onClose}>
       <FormField label="Name">
         <FormInput
@@ -157,7 +164,7 @@ export function FamilyTreePersonModal({ visible, onClose, person }: FamilyTreePe
         </>
       ) : null}
 
-      <GoldButton label={person ? 'Save Changes' : 'Add Person'} onPress={handleSave} />
+      <GoldButton label={person ? 'Save changes' : 'Add person'} onPress={handleSave} />
     </AppModal>
   );
 }

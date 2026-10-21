@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { FloatingActionButton } from '@/components/common/FloatingActionButton';
 import { GoldButton } from '@/components/common/GoldButton';
+import { MemberContribute } from '@/components/common/MemberContribute';
 import { ScreenContainer } from '@/components/common/ScreenContainer';
 import {
   Checklist,
@@ -15,11 +16,13 @@ import {
 import { WorshipGuideModal } from '@/components/worship/WorshipEditors';
 import { useAppContext } from '@/context/AppContext';
 import { FamilyTypography } from '@/constants/familyTheme';
+import type { WorshipGuide } from '@/types';
 
 export function WorshipGuidesScreen() {
   const router = useRouter();
   const { worshipGuides } = useAppContext();
   const [adding, setAdding] = useState(false);
+  const [editing, setEditing] = useState<WorshipGuide | null>(null);
 
   return (
     <View style={styles.root}>
@@ -28,10 +31,15 @@ export function WorshipGuidesScreen() {
         <WorshipHeader
           eyebrow="祭祀指引 · Guides"
           title="How we observe"
-          subtitle="Editable notes, one step on each line."
+          subtitle="Any member can add a guide or change the steps."
+        />
+        <MemberContribute
+          hint="Write a title and one step per line."
+          label="Add info · 加入"
+          onPress={() => setAdding(true)}
         />
         {worshipGuides.length === 0 ? (
-          <WorshipEmpty text="No guides yet. Tap + to write the first." />
+          <WorshipEmpty text="No guides yet." />
         ) : (
           worshipGuides.map((guide) => {
             const first = guide.body.split('\n').map((line) => line.trim()).find(Boolean);
@@ -41,13 +49,22 @@ export function WorshipGuidesScreen() {
                 title={guide.title}
                 detail={first}
                 onPress={() => router.push(`/worship/guide/${guide.id}`)}
+                actionLabel="Edit info · 修改"
+                onAction={() => setEditing(guide)}
               />
             );
           })
         )}
       </ScreenContainer>
       <FloatingActionButton onPress={() => setAdding(true)} />
-      <WorshipGuideModal visible={adding} onClose={() => setAdding(false)} />
+      <WorshipGuideModal
+        visible={adding || editing != null}
+        guide={editing}
+        onClose={() => {
+          setAdding(false);
+          setEditing(null);
+        }}
+      />
     </View>
   );
 }
@@ -87,9 +104,13 @@ export function WorshipGuideDetailScreen() {
       <ScreenContainer>
         <WorshipBack onPress={() => router.back()} />
         <WorshipHeader eyebrow="祭祀指引 · Guide" title={guide.title} />
+        <MemberContribute
+          hint="Any household member can change these steps."
+          label="Edit info · 修改"
+          onPress={() => setEditing(true)}
+        />
         <Checklist body={guide.body} />
         <View style={styles.actions}>
-          <GoldButton label="Edit" onPress={() => setEditing(true)} />
           <GoldButton label="Remove" onPress={confirmRemove} variant="outline" />
         </View>
       </ScreenContainer>

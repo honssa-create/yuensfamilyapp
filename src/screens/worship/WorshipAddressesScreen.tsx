@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { FloatingActionButton } from '@/components/common/FloatingActionButton';
 import { GoldButton } from '@/components/common/GoldButton';
+import { MemberContribute } from '@/components/common/MemberContribute';
 import { ScreenContainer } from '@/components/common/ScreenContainer';
 import {
   WorshipBack,
@@ -15,12 +16,14 @@ import {
 import { WorshipAddressModal } from '@/components/worship/WorshipEditors';
 import { useAppContext } from '@/context/AppContext';
 import { FamilyTypography } from '@/constants/familyTheme';
+import type { WorshipAddress } from '@/types';
 import { formatMonthDay, formatRecordDate } from '@/utils/date';
 
 export function WorshipAddressesScreen() {
   const router = useRouter();
   const { worshipAddresses } = useAppContext();
   const [adding, setAdding] = useState(false);
+  const [editingRow, setEditingRow] = useState<WorshipAddress | null>(null);
 
   return (
     <View style={styles.root}>
@@ -29,10 +32,15 @@ export function WorshipAddressesScreen() {
         <WorshipHeader
           eyebrow="地址 · Addresses"
           title="Where we go"
-          subtitle="Places linked from records and yearly dates."
+          subtitle="Places linked from records and yearly dates. Any member can add or edit one."
+        />
+        <MemberContribute
+          hint="Add a name and address. A short note is optional."
+          label="Add info · 加入"
+          onPress={() => setAdding(true)}
         />
         {worshipAddresses.length === 0 ? (
-          <WorshipEmpty text="No addresses yet. Tap + to add a place." />
+          <WorshipEmpty text="No addresses yet." />
         ) : (
           worshipAddresses.map((place) => (
             <WorshipCard
@@ -40,12 +48,21 @@ export function WorshipAddressesScreen() {
               title={place.name}
               detail={place.address}
               onPress={() => router.push(`/worship/address/${place.id}`)}
+              actionLabel="Edit info · 修改"
+              onAction={() => setEditingRow(place)}
             />
           ))
         )}
       </ScreenContainer>
       <FloatingActionButton onPress={() => setAdding(true)} />
-      <WorshipAddressModal visible={adding} onClose={() => setAdding(false)} />
+      <WorshipAddressModal
+        visible={adding || editingRow != null}
+        address={editingRow}
+        onClose={() => {
+          setAdding(false);
+          setEditingRow(null);
+        }}
+      />
     </View>
   );
 }
@@ -94,7 +111,12 @@ export function WorshipAddressDetailScreen() {
       <ScreenContainer>
         <WorshipBack onPress={() => router.back()} />
         <WorshipHeader eyebrow="地址 · Address" title={place.name} subtitle={place.address} />
-        {place.note ? <Text style={styles.body}>{place.note}</Text> : null}
+        <MemberContribute
+          hint="Any household member can update this place."
+          label="Edit info · 修改"
+          onPress={() => setEditing(true)}
+        />
+        <Text style={styles.body}>{place.note || 'No note yet. Add one with Edit info.'}</Text>
         {occasions.length > 0 ? (
           <WorshipSection>
             <Text style={styles.group}>Yearly dates</Text>
@@ -123,7 +145,6 @@ export function WorshipAddressDetailScreen() {
           </WorshipSection>
         ) : null}
         <View style={styles.actions}>
-          <GoldButton label="Edit" onPress={() => setEditing(true)} />
           <GoldButton label="Remove" onPress={confirmRemove} variant="outline" />
         </View>
       </ScreenContainer>

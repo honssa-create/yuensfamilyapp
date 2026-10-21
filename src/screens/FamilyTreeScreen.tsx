@@ -5,8 +5,10 @@ import { useRouter } from 'expo-router';
 import { FamilyTreeCard } from '@/components/family-tree/FamilyTreeCard';
 import { FamilyTreePersonModal } from '@/components/family-tree/FamilyTreePersonModal';
 import { FloatingActionButton } from '@/components/common/FloatingActionButton';
+import { MemberContribute } from '@/components/common/MemberContribute';
 import { ScreenContainer } from '@/components/common/ScreenContainer';
 import { useAppContext } from '@/context/AppContext';
+import type { FamilyTreePerson } from '@/types';
 import {
   FamilyPalette,
   FamilySpacing,
@@ -17,8 +19,14 @@ import { generationLabel, layoutFamilyTree } from '@/utils/familyTree';
 export function FamilyTreeScreen() {
   const router = useRouter();
   const { familyTree } = useAppContext();
-  const [modalVisible, setModalVisible] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [editing, setEditing] = useState<FamilyTreePerson | null>(null);
   const generations = layoutFamilyTree(familyTree);
+
+  const openAdd = () => {
+    setEditing(null);
+    setAdding(true);
+  };
 
   return (
     <View style={styles.root}>
@@ -31,9 +39,15 @@ export function FamilyTreeScreen() {
           </Text>
         </View>
 
+        <MemberContribute
+          hint="Any household member can add a person or update a name, age, bio, or relation."
+          label="Add person · 加入"
+          onPress={openAdd}
+        />
+
         {generations.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>The tree is quiet. Tap + to add the first person.</Text>
+            <Text style={styles.emptyText}>The tree is quiet. Add the first person above.</Text>
           </View>
         ) : (
           generations.map((generation, generationIndex) => (
@@ -53,6 +67,7 @@ export function FamilyTreeScreen() {
                         <FamilyTreeCard
                           person={person}
                           onPress={() => router.push(`/family-tree/${person.id}`)}
+                          onEdit={() => setEditing(person)}
                         />
                       </View>
                     ))}
@@ -64,8 +79,15 @@ export function FamilyTreeScreen() {
         )}
       </ScreenContainer>
 
-      <FloatingActionButton onPress={() => setModalVisible(true)} />
-      <FamilyTreePersonModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <FloatingActionButton onPress={openAdd} />
+      <FamilyTreePersonModal
+        visible={adding || editing != null}
+        person={editing}
+        onClose={() => {
+          setAdding(false);
+          setEditing(null);
+        }}
+      />
     </View>
   );
 }

@@ -18,8 +18,8 @@ Those invoicegenerator branches and pull requests were left unchanged.
 ## What's in the app
 
 - **Members** — family members grouped by flat (for example 10J and 20C).
-- **Family Tree (族譜)** — names, ages, and short bios, with optional parent and spouse links.
-- **祭祀 Ancestral worship** — records of offerings, guides, yearly dates, and addresses. Yearly dates use the Gregorian calendar; a note can hold the lunar date (農曆).
+- **Family Tree (族譜)** — names, ages, and short bios, with optional parent and spouse links. Any household member can add or edit a person.
+- **祭祀 Ancestral worship** — records of offerings, guides, yearly dates, and addresses. Any household member can add or edit each one. Yearly dates use the Gregorian calendar; a note can hold the lunar date (農曆).
 - **Dishes** — shared recipe library, including a hotpot set builder and optional YouTube title lookup.
 - **Community (公海)** — public recipes with likes and comments.
 - **Planner** — meal calendar, random picks, and a simple budget planner.

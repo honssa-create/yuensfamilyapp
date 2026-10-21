@@ -39,21 +39,45 @@ export function WorshipCard({
   title,
   detail,
   onPress,
+  actionLabel,
+  onAction,
 }: {
   kicker?: string;
   title: string;
   detail?: string;
   onPress: () => void;
+  actionLabel?: string;
+  onAction?: () => void;
 }) {
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={title}
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-      {kicker ? <Text style={styles.kicker}>{kicker}</Text> : null}
-      <Text style={styles.cardTitle}>{title}</Text>
-      {detail ? <Text style={styles.detail}>{detail}</Text> : null}
+    <View style={styles.card}>
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={title}
+        style={({ pressed }) => pressed && styles.pressed}>
+        {kicker ? <Text style={styles.kicker}>{kicker}</Text> : null}
+        <Text style={styles.cardTitle}>{title}</Text>
+        {detail ? <Text style={styles.detail}>{detail}</Text> : null}
+      </Pressable>
+      {onAction && actionLabel ? (
+        <Pressable
+          onPress={onAction}
+          accessibilityRole="button"
+          accessibilityLabel={actionLabel}
+          style={styles.actionHit}>
+          <Text style={styles.action}>{actionLabel}</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
+
+export function WorshipPrompt({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={styles.prompt} accessibilityRole="button">
+      <Text style={styles.promptLabel}>{label}</Text>
+      <Text style={styles.action}>Add info · 加入</Text>
     </Pressable>
   );
 }
@@ -157,6 +181,34 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.88,
+  },
+  actionHit: {
+    marginTop: FamilySpacing.sm,
+    paddingTop: FamilySpacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: FamilyPalette.border,
+  },
+  action: {
+    ...FamilyTypography.caption,
+    color: FamilyPalette.champagne,
+    letterSpacing: 0.4,
+  },
+  prompt: {
+    backgroundColor: FamilyPalette.softWhite,
+    borderRadius: FamilyRadius.md,
+    borderWidth: 1,
+    borderColor: FamilyPalette.border,
+    paddingHorizontal: FamilySpacing.md,
+    paddingVertical: FamilySpacing.md,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: FamilySpacing.md,
+  },
+  promptLabel: {
+    ...FamilyTypography.body,
+    color: FamilyPalette.charcoalMuted,
+    flex: 1,
   },
   kicker: {
     ...FamilyTypography.label,

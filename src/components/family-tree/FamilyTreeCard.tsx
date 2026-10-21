@@ -11,28 +11,38 @@ import type { FamilyTreePerson } from '@/types';
 interface FamilyTreeCardProps {
   person: FamilyTreePerson;
   onPress: () => void;
+  onEdit: () => void;
 }
 
-export function FamilyTreeCard({ person, onPress }: FamilyTreeCardProps) {
+export function FamilyTreeCard({ person, onPress, onEdit }: FamilyTreeCardProps) {
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`${person.name}, age ${person.age}`}
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-      <View style={styles.initial}>
-        <Text style={styles.initialText}>{person.name.charAt(0)}</Text>
-      </View>
-      <Text style={styles.name}>{person.name}</Text>
-      <Text style={styles.age}>Age {person.age}</Text>
-      {person.bio ? (
-        <Text style={styles.bio} numberOfLines={3}>
-          {person.bio}
-        </Text>
-      ) : (
-        <Text style={styles.bioMuted}>No bio yet</Text>
-      )}
-    </Pressable>
+    <View style={styles.card}>
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={`${person.name}, age ${person.age}`}
+        style={({ pressed }) => pressed && styles.pressed}>
+        <View style={styles.initial}>
+          <Text style={styles.initialText}>{person.name.charAt(0)}</Text>
+        </View>
+        <Text style={styles.name}>{person.name}</Text>
+        <Text style={styles.age}>Age {person.age}</Text>
+        {person.bio ? (
+          <Text style={styles.bio} numberOfLines={3}>
+            {person.bio}
+          </Text>
+        ) : (
+          <Text style={styles.bioMuted}>No bio yet</Text>
+        )}
+      </Pressable>
+      <Pressable
+        onPress={onEdit}
+        accessibilityRole="button"
+        accessibilityLabel={`Edit ${person.name}`}
+        style={styles.editHit}>
+        <Text style={styles.edit}>Edit info · 修改</Text>
+      </Pressable>
+    </View>
   );
 }
 
@@ -81,5 +91,16 @@ const styles = StyleSheet.create({
     ...FamilyTypography.caption,
     fontStyle: 'italic',
     marginTop: FamilySpacing.xs,
+  },
+  editHit: {
+    marginTop: FamilySpacing.sm,
+    paddingTop: FamilySpacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: FamilyPalette.border,
+  },
+  edit: {
+    ...FamilyTypography.caption,
+    color: FamilyPalette.champagne,
+    letterSpacing: 0.4,
   },
 });
