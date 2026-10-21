@@ -5,6 +5,45 @@ export function toDateString(date: Date = new Date()): string {
   return `${year}-${month}-${day}`;
 }
 
+export function isValidDateString(value: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const probe = new Date(year, month - 1, day);
+  return probe.getFullYear() === year && probe.getMonth() === month - 1 && probe.getDate() === day;
+}
+
+/** Gregorian month-day, MM-DD. Leap day is allowed. */
+export function isValidMonthDay(value: string): boolean {
+  const match = /^(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const month = Number(match[1]);
+  const day = Number(match[2]);
+  const probe = new Date(2000, month - 1, day);
+  return probe.getMonth() === month - 1 && probe.getDate() === day;
+}
+
+export function formatMonthDay(monthDay: string): string {
+  if (!isValidMonthDay(monthDay)) return monthDay;
+  const [month, day] = monthDay.split('-').map(Number);
+  return new Date(2000, month - 1, day).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+export function formatRecordDate(dateString: string): string {
+  if (!isValidDateString(dateString)) return dateString;
+  const date = new Date(`${dateString}T12:00:00`);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
 export function formatDisplayDate(dateString: string): string {
   const date = new Date(`${dateString}T12:00:00`);
   return date.toLocaleDateString('en-US', {

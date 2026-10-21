@@ -18,6 +18,11 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Icon sf="tree.fill" md="account_tree" />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="worship">
+        <NativeTabs.Trigger.Label>祭祀</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="flame.fill" md="local_fire_department" />
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="dishes">
         <NativeTabs.Trigger.Label>Dishes</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="book.fill" md="menu_book" />

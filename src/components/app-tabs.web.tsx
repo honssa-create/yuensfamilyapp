@@ -6,7 +6,7 @@ import {
   TabTriggerSlotProps,
   TabListProps,
 } from 'expo-router/ui';
-import { Pressable, View, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, View, StyleSheet } from 'react-native';
 
 import { ThemedText } from './themed-text';
 
@@ -29,6 +29,9 @@ export default function AppTabs() {
           </TabTrigger>
           <TabTrigger name="family-tree" href="/family-tree" asChild>
             <TabButton>Family Tree</TabButton>
+          </TabTrigger>
+          <TabTrigger name="worship" href="/worship" asChild>
+            <TabButton>祭祀</TabButton>
           </TabTrigger>
           <TabTrigger name="dishes" href="/dishes" asChild>
             <TabButton>Dishes</TabButton>
@@ -62,7 +65,13 @@ export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps
 export function CustomTabList(props: TabListProps) {
   return (
     <View {...props} style={styles.tabListContainer}>
-      <View style={styles.innerContainer}>{props.children}</View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.scroller}
+        contentContainerStyle={styles.innerContainer}>
+        {props.children}
+      </ScrollView>
     </View>
   );
 }
@@ -78,6 +87,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'transparent',
   },
+  scroller: {
+    width: '100%',
+    maxWidth: MaxContentWidth,
+    flexGrow: 0,
+  },
   innerContainer: {
     paddingVertical: FamilySpacing.sm,
     paddingHorizontal: FamilySpacing.sm,
@@ -85,9 +99,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    flexGrow: 1,
     gap: FamilySpacing.xs,
-    width: '100%',
-    maxWidth: MaxContentWidth,
     backgroundColor: FamilyPalette.softWhite,
     borderWidth: 1,
     borderColor: FamilyPalette.border,
@@ -101,9 +114,8 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   tabButtonView: {
-    flex: 1,
     paddingVertical: FamilySpacing.sm + 2,
-    paddingHorizontal: FamilySpacing.xs,
+    paddingHorizontal: FamilySpacing.sm,
     borderRadius: FamilyRadius.md,
     alignItems: 'center',
   },

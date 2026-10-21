@@ -19,6 +19,12 @@ import {
   MOCK_MEMBERS,
   MOCK_PUBLIC_DISHES,
 } from '@/constants/mockData';
+import {
+  MOCK_WORSHIP_ADDRESSES,
+  MOCK_WORSHIP_GUIDES,
+  MOCK_WORSHIP_OCCASIONS,
+  MOCK_WORSHIP_RECORDS,
+} from '@/constants/worship';
 import type {
   AddDishInput,
   AddHotpotSetInput,
@@ -38,6 +44,14 @@ import type {
   MealPlansByFlat,
   PublicDish,
   RecipeComment,
+  WorshipAddress,
+  WorshipAddressInput,
+  WorshipGuide,
+  WorshipGuideInput,
+  WorshipOccasion,
+  WorshipOccasionInput,
+  WorshipRecord,
+  WorshipRecordInput,
 } from '@/types';
 import { suggestDishesForBudget } from '@/utils/budgetPlanner';
 import { isWithinScheduleWindow, toDateString } from '@/utils/date';
@@ -55,6 +69,22 @@ interface AppContextValue {
   updateFamilyTreePerson: (id: string, input: FamilyTreePersonInput) => void;
   deleteFamilyTreePerson: (id: string) => void;
   getFamilyTreePerson: (id: string) => FamilyTreePerson | undefined;
+  worshipAddresses: WorshipAddress[];
+  worshipGuides: WorshipGuide[];
+  worshipOccasions: WorshipOccasion[];
+  worshipRecords: WorshipRecord[];
+  addWorshipAddress: (input: WorshipAddressInput) => string;
+  updateWorshipAddress: (id: string, input: WorshipAddressInput) => void;
+  deleteWorshipAddress: (id: string) => void;
+  addWorshipGuide: (input: WorshipGuideInput) => string;
+  updateWorshipGuide: (id: string, input: WorshipGuideInput) => void;
+  deleteWorshipGuide: (id: string) => void;
+  addWorshipOccasion: (input: WorshipOccasionInput) => string;
+  updateWorshipOccasion: (id: string, input: WorshipOccasionInput) => void;
+  deleteWorshipOccasion: (id: string) => void;
+  addWorshipRecord: (input: WorshipRecordInput) => string;
+  updateWorshipRecord: (id: string, input: WorshipRecordInput) => void;
+  deleteWorshipRecord: (id: string) => void;
   dishes: Dish[];
   hotpotIngredients: HotpotIngredient[];
   hotpotSets: HotpotSet[];
@@ -116,6 +146,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [dishComments, setDishComments] = useState<DishComment[]>(MOCK_COMMENTS);
   const [dishActivities, setDishActivities] = useState<DishActivity[]>(MOCK_ACTIVITIES);
   const [publicDishes, setPublicDishes] = useState<PublicDish[]>(MOCK_PUBLIC_DISHES);
+  const [worshipAddresses, setWorshipAddresses] = useState<WorshipAddress[]>(MOCK_WORSHIP_ADDRESSES);
+  const [worshipGuides, setWorshipGuides] = useState<WorshipGuide[]>(MOCK_WORSHIP_GUIDES);
+  const [worshipOccasions, setWorshipOccasions] = useState<WorshipOccasion[]>(MOCK_WORSHIP_OCCASIONS);
+  const [worshipRecords, setWorshipRecords] = useState<WorshipRecord[]>(MOCK_WORSHIP_RECORDS);
 
   const getFlatName = useCallback(
     (flatId: FlatId) => flats.find((flat) => flat.id === flatId)?.name ?? flatId,
@@ -245,6 +279,105 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (id: string) => familyTree.find((person) => person.id === id),
     [familyTree],
   );
+
+  const addWorshipAddress = useCallback((input: WorshipAddressInput) => {
+    const id = createId('wa');
+    setWorshipAddresses((prev) => [...prev, { id, ...input }]);
+    return id;
+  }, []);
+
+  const updateWorshipAddress = useCallback((id: string, input: WorshipAddressInput) => {
+    setWorshipAddresses((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...input } : item)),
+    );
+  }, []);
+
+  const deleteWorshipAddress = useCallback((id: string) => {
+    setWorshipAddresses((prev) => prev.filter((item) => item.id !== id));
+    setWorshipOccasions((prev) =>
+      prev.map((item) => (item.addressId === id ? { ...item, addressId: undefined } : item)),
+    );
+    setWorshipRecords((prev) =>
+      prev.map((item) => (item.addressId === id ? { ...item, addressId: undefined } : item)),
+    );
+  }, []);
+
+  const addWorshipGuide = useCallback((input: WorshipGuideInput) => {
+    const id = createId('wg');
+    setWorshipGuides((prev) => [...prev, { id, ...input }]);
+    return id;
+  }, []);
+
+  const updateWorshipGuide = useCallback((id: string, input: WorshipGuideInput) => {
+    setWorshipGuides((prev) => prev.map((item) => (item.id === id ? { ...item, ...input } : item)));
+  }, []);
+
+  const deleteWorshipGuide = useCallback((id: string) => {
+    setWorshipGuides((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
+  const addWorshipOccasion = useCallback((input: WorshipOccasionInput) => {
+    const id = createId('wo');
+    setWorshipOccasions((prev) => [
+      ...prev,
+      { id, name: input.name, monthDay: input.monthDay, note: input.note, addressId: input.addressId || undefined },
+    ]);
+    return id;
+  }, []);
+
+  const updateWorshipOccasion = useCallback((id: string, input: WorshipOccasionInput) => {
+    setWorshipOccasions((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, name: input.name, monthDay: input.monthDay, note: input.note, addressId: input.addressId || undefined }
+          : item,
+      ),
+    );
+  }, []);
+
+  const deleteWorshipOccasion = useCallback((id: string) => {
+    setWorshipOccasions((prev) => prev.filter((item) => item.id !== id));
+    setWorshipRecords((prev) =>
+      prev.map((item) => (item.occasionId === id ? { ...item, occasionId: undefined } : item)),
+    );
+  }, []);
+
+  const addWorshipRecord = useCallback((input: WorshipRecordInput) => {
+    const id = createId('wr');
+    setWorshipRecords((prev) => [
+      ...prev,
+      {
+        id,
+        date: input.date,
+        what: input.what,
+        notes: input.notes,
+        addressId: input.addressId || undefined,
+        occasionId: input.occasionId || undefined,
+      },
+    ]);
+    return id;
+  }, []);
+
+  const updateWorshipRecord = useCallback((id: string, input: WorshipRecordInput) => {
+    setWorshipRecords((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              date: input.date,
+              what: input.what,
+              notes: input.notes,
+              addressId: input.addressId || undefined,
+              occasionId: input.occasionId || undefined,
+            }
+          : item,
+      ),
+    );
+  }, []);
+
+  const deleteWorshipRecord = useCallback((id: string) => {
+    setWorshipRecords((prev) => prev.filter((item) => item.id !== id));
+  }, []);
 
   const addDish = useCallback(
     (input: AddDishInput) => {
@@ -540,6 +673,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateFamilyTreePerson,
       deleteFamilyTreePerson,
       getFamilyTreePerson,
+      worshipAddresses,
+      worshipGuides,
+      worshipOccasions,
+      worshipRecords,
+      addWorshipAddress,
+      updateWorshipAddress,
+      deleteWorshipAddress,
+      addWorshipGuide,
+      updateWorshipGuide,
+      deleteWorshipGuide,
+      addWorshipOccasion,
+      updateWorshipOccasion,
+      deleteWorshipOccasion,
+      addWorshipRecord,
+      updateWorshipRecord,
+      deleteWorshipRecord,
       dishes: allDishes,
       hotpotIngredients,
       hotpotSets,
@@ -587,6 +736,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateFamilyTreePerson,
       deleteFamilyTreePerson,
       getFamilyTreePerson,
+      worshipAddresses,
+      worshipGuides,
+      worshipOccasions,
+      worshipRecords,
+      addWorshipAddress,
+      updateWorshipAddress,
+      deleteWorshipAddress,
+      addWorshipGuide,
+      updateWorshipGuide,
+      deleteWorshipGuide,
+      addWorshipOccasion,
+      updateWorshipOccasion,
+      deleteWorshipOccasion,
+      addWorshipRecord,
+      updateWorshipRecord,
+      deleteWorshipRecord,
       allDishes,
       hotpotIngredients,
       hotpotSets,

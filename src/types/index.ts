@@ -63,6 +63,67 @@ export interface FamilyTreePersonInput {
   spouseId?: string | null;
 }
 
+export interface WorshipAddress {
+  id: string;
+  name: string;
+  address: string;
+  note: string;
+}
+
+export interface WorshipAddressInput {
+  name: string;
+  address: string;
+  note: string;
+}
+
+/** Guidance article. Each line of `body` is one checklist-style note. */
+export interface WorshipGuide {
+  id: string;
+  title: string;
+  body: string;
+}
+
+export interface WorshipGuideInput {
+  title: string;
+  body: string;
+}
+
+/**
+ * A date observed every year. `monthDay` is Gregorian (MM-DD).
+ * Lunar dates belong in `note` (for example 農曆九月初九).
+ */
+export interface WorshipOccasion {
+  id: string;
+  name: string;
+  monthDay: string;
+  note: string;
+  addressId?: string;
+}
+
+export interface WorshipOccasionInput {
+  name: string;
+  monthDay: string;
+  note: string;
+  addressId?: string | null;
+}
+
+export interface WorshipRecord {
+  id: string;
+  date: string;
+  what: string;
+  notes: string;
+  addressId?: string;
+  occasionId?: string;
+}
+
+export interface WorshipRecordInput {
+  date: string;
+  what: string;
+  notes: string;
+  addressId?: string | null;
+  occasionId?: string | null;
+}
+
 /** @deprecated Use FamilyMember */
 export type FamilyProfile = FamilyMember;
 
