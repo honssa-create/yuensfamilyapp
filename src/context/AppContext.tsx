@@ -15,6 +15,7 @@ import {
   MOCK_DISHES,
   MOCK_FLATS,
   MOCK_HOTPOT_INGREDIENTS,
+  MOCK_FAMILY_TREE,
   MOCK_MEMBERS,
   MOCK_PUBLIC_DISHES,
 } from '@/constants/mockData';
@@ -27,6 +28,8 @@ import type {
   DishActivity,
   DishComment,
   FamilyMember,
+  FamilyTreePerson,
+  FamilyTreePersonInput,
   Flat,
   FlatId,
   HotpotIngredient,
@@ -38,6 +41,7 @@ import type {
 } from '@/types';
 import { suggestDishesForBudget } from '@/utils/budgetPlanner';
 import { isWithinScheduleWindow, toDateString } from '@/utils/date';
+import { removeFamilyTreePerson, upsertFamilyTreePerson } from '@/utils/familyTree';
 
 interface AppContextValue {
   flats: Flat[];
@@ -46,6 +50,11 @@ interface AppContextValue {
   addFlat: (name: string) => FlatId;
   getFlatName: (flatId: FlatId) => string;
   members: FamilyMember[];
+  familyTree: FamilyTreePerson[];
+  addFamilyTreePerson: (input: FamilyTreePersonInput) => string;
+  updateFamilyTreePerson: (id: string, input: FamilyTreePersonInput) => void;
+  deleteFamilyTreePerson: (id: string) => void;
+  getFamilyTreePerson: (id: string) => FamilyTreePerson | undefined;
   dishes: Dish[];
   hotpotIngredients: HotpotIngredient[];
   hotpotSets: HotpotSet[];
@@ -99,6 +108,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [flats, setFlats] = useState<Flat[]>(MOCK_FLATS);
   const [activeFlat, setActiveFlat] = useState<FlatId>(FLAT_10J);
   const [members, setMembers] = useState<FamilyMember[]>(MOCK_MEMBERS);
+  const [familyTree, setFamilyTree] = useState<FamilyTreePerson[]>(MOCK_FAMILY_TREE);
   const [dishes, setDishes] = useState<Dish[]>(MOCK_DISHES);
   const [hotpotIngredients] = useState<HotpotIngredient[]>(MOCK_HOTPOT_INGREDIENTS);
   const [hotpotSets, setHotpotSets] = useState<HotpotSet[]>([]);
@@ -212,6 +222,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteMember = useCallback((id: string) => {
     setMembers((prev) => prev.filter((member) => member.id !== id));
   }, []);
+
+  const addFamilyTreePerson = useCallback((input: FamilyTreePersonInput) => {
+    const id = createId('ft');
+    setFamilyTree((prev) =>
+      upsertFamilyTreePerson(prev, { id, name: input.name, age: input.age, bio: input.bio }, input),
+    );
+    return id;
+  }, []);
+
+  const updateFamilyTreePerson = useCallback((id: string, input: FamilyTreePersonInput) => {
+    setFamilyTree((prev) =>
+      upsertFamilyTreePerson(prev, { id, name: input.name, age: input.age, bio: input.bio }, input),
+    );
+  }, []);
+
+  const deleteFamilyTreePerson = useCallback((id: string) => {
+    setFamilyTree((prev) => removeFamilyTreePerson(prev, id));
+  }, []);
+
+  const getFamilyTreePerson = useCallback(
+    (id: string) => familyTree.find((person) => person.id === id),
+    [familyTree],
+  );
 
   const addDish = useCallback(
     (input: AddDishInput) => {
@@ -502,6 +535,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addFlat,
       getFlatName,
       members,
+      familyTree,
+      addFamilyTreePerson,
+      updateFamilyTreePerson,
+      deleteFamilyTreePerson,
+      getFamilyTreePerson,
       dishes: allDishes,
       hotpotIngredients,
       hotpotSets,
@@ -544,6 +582,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addFlat,
       getFlatName,
       members,
+      familyTree,
+      addFamilyTreePerson,
+      updateFamilyTreePerson,
+      deleteFamilyTreePerson,
+      getFamilyTreePerson,
       allDishes,
       hotpotIngredients,
       hotpotSets,

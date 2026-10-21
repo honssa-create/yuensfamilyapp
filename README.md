@@ -18,6 +18,7 @@ Those invoicegenerator branches and pull requests were left unchanged.
 ## What's in the app
 
 - **Members** — family members grouped by flat (for example 10J and 20C).
+- **Family Tree (族譜)** — names, ages, and short bios, with optional parent and spouse links.
 - **Dishes** — shared recipe library, including a hotpot set builder and optional YouTube title lookup.
 - **Community (公海)** — public recipes with likes and comments.
 - **Planner** — meal calendar, random picks, and a simple budget planner.

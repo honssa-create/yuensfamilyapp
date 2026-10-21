@@ -13,6 +13,11 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Icon sf="person.2.fill" md="group" />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="family-tree">
+        <NativeTabs.Trigger.Label>Family Tree</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="tree.fill" md="account_tree" />
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="dishes">
         <NativeTabs.Trigger.Label>Dishes</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="book.fill" md="menu_book" />

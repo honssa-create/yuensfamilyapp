@@ -35,6 +35,34 @@ export interface FamilyMember {
   avatarUri?: string;
 }
 
+/** Optional link on a family-tree person. Child links are derived from parent links. */
+export type FamilyTreeRelationKind = 'parent' | 'spouse';
+
+export interface FamilyTreeRelation {
+  personId: string;
+  kind: FamilyTreeRelationKind;
+}
+
+/**
+ * A person on the family tree. `relations` is optional so a record can be
+ * saved with only name, age, and bio.
+ */
+export interface FamilyTreePerson {
+  id: string;
+  name: string;
+  age: number;
+  bio: string;
+  relations?: FamilyTreeRelation[];
+}
+
+export interface FamilyTreePersonInput {
+  name: string;
+  age: number;
+  bio: string;
+  parentIds?: string[];
+  spouseId?: string | null;
+}
+
 /** @deprecated Use FamilyMember */
 export type FamilyProfile = FamilyMember;
 

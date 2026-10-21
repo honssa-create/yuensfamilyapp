@@ -3,6 +3,7 @@ import type {
   DishActivity,
   DishComment,
   FamilyMember,
+  FamilyTreePerson,
   Flat,
   HotpotIngredient,
   MealPlansByFlat,
@@ -48,6 +49,63 @@ export const MOCK_MEMBERS: FamilyMember[] = [
     name: 'Marcus Lee',
     birthday: '1985-01-18',
     flatId: FLAT_20C,
+  },
+];
+
+export const MOCK_FAMILY_TREE: FamilyTreePerson[] = [
+  {
+    id: 'ft-kwok',
+    name: 'Kwok-keung Yuen',
+    age: 78,
+    bio: 'Keeps the Sunday table and the old recipes from home.',
+    relations: [{ personId: 'ft-mei', kind: 'spouse' }],
+  },
+  {
+    id: 'ft-mei',
+    name: 'Mei-ling Chan',
+    age: 76,
+    bio: 'Grows herbs on the balcony and remembers every birthday.',
+    relations: [{ personId: 'ft-kwok', kind: 'spouse' }],
+  },
+  {
+    id: 'ft-chi',
+    name: 'Chi-ming Yuen',
+    age: 52,
+    bio: 'Plans the weeknight meals and keeps both flats in the loop.',
+    relations: [
+      { personId: 'ft-kwok', kind: 'parent' },
+      { personId: 'ft-mei', kind: 'parent' },
+      { personId: 'ft-wai', kind: 'spouse' },
+    ],
+  },
+  {
+    id: 'ft-wai',
+    name: 'Wai-fan Lee',
+    age: 49,
+    bio: 'Writes the grocery list and the notes everyone else forgets.',
+    relations: [
+      { personId: 'ft-chi', kind: 'spouse' },
+    ],
+  },
+  {
+    id: 'ft-ching',
+    name: 'Ka-ching Yuen',
+    age: 24,
+    bio: 'Learns the family dishes, then adds a twist of her own.',
+    relations: [
+      { personId: 'ft-chi', kind: 'parent' },
+      { personId: 'ft-wai', kind: 'parent' },
+    ],
+  },
+  {
+    id: 'ft-chun',
+    name: 'Ka-chun Yuen',
+    age: 21,
+    bio: 'Home for the holidays, and always the first to ask for hotpot.',
+    relations: [
+      { personId: 'ft-chi', kind: 'parent' },
+      { personId: 'ft-wai', kind: 'parent' },
+    ],
   },
 ];
 

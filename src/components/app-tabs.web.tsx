@@ -27,6 +27,9 @@ export default function AppTabs() {
           <TabTrigger name="members" href="/" asChild>
             <TabButton>Members</TabButton>
           </TabTrigger>
+          <TabTrigger name="family-tree" href="/family-tree" asChild>
+            <TabButton>Family Tree</TabButton>
+          </TabTrigger>
           <TabTrigger name="dishes" href="/dishes" asChild>
             <TabButton>Dishes</TabButton>
           </TabTrigger>
@@ -100,7 +103,7 @@ const styles = StyleSheet.create({
   tabButtonView: {
     flex: 1,
     paddingVertical: FamilySpacing.sm + 2,
-    paddingHorizontal: FamilySpacing.sm,
+    paddingHorizontal: FamilySpacing.xs,
     borderRadius: FamilyRadius.md,
     alignItems: 'center',
   },
@@ -109,7 +112,8 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     color: FamilyPalette.charcoalMuted,
-    fontSize: 13,
+    fontSize: 12,
+    textAlign: 'center',
   },
   tabLabelFocused: {
     color: FamilyPalette.charcoal,
