@@ -45,3 +45,39 @@ npm run web
 Other scripts: `npm run android`, `npm run ios`, and `npm run lint`.
 
 Routes live in `src/app` (Expo Router). Shared screens and components are under `src/`.
+
+## Web preview on Railway
+
+This deploy is a **browser preview** of the same app. It is not the native app. Expo Go, iOS, and Android still run on a machine with `npx expo start`.
+
+Data stays in the browser as local mock state. No API keys and no environment variables are required. Railway sets `PORT`; the server listens on `0.0.0.0` and that port (8080 if `PORT` is unset).
+
+Build the static Expo web export:
+
+```bash
+npm install
+npm run build:web
+```
+
+Start the preview server (serves the `dist/` export):
+
+```bash
+npm run start:web
+```
+
+`npm start` is still the local Expo dev server. The Railway container uses `node server.js` instead.
+
+### Deploy
+
+The repo root includes a `Dockerfile` and `railway.toml`. After this branch is on GitHub:
+
+1. In Vanessa's Railway account, create a service from this GitHub repo (root directory, not a subfolder).
+2. Railway detects the `Dockerfile`, runs `npm ci` and `npm run build:web`, then starts `node server.js`.
+3. In the service networking settings, generate a public domain. That becomes the preview URL. This repo does not create the Railway project or the URL.
+
+From a machine logged into the Railway CLI and linked to that project, `railway up` in the repo root deploys the same Dockerfile.
+
+If the dashboard asks for commands anyway:
+
+- Build: handled by the Dockerfile (`npm ci`, then `npm run build:web`)
+- Start: `node server.js`

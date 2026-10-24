@@ -1,0 +1,13 @@
+# Railway builds this repo with the Dockerfile when one is present.
+# startCommand matches the image CMD: a Node server for the Expo web export.
+# No environment variables are required. Railway sets PORT.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "node server.js"
+healthcheckPath = "/"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
